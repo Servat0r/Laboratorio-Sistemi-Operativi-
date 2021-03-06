@@ -9,14 +9,22 @@
 //Non rientrante ma thread-safe
 int somma(int x){
 	static int s = INIT_VALUE;
-	Lock();
+	//Lock();
 	s += x;
-	Unlock();
+	//Unlock();
 	return s;
 }
 
+//Versione rientrante
+int somma_r(int x){
+	static int s = INIT_VALUE;
+	int temp = x + s;
+	s = temp;
+	return temp;
+}
+
 //Versione rientrante ma con un argomento in più
-int somma_r(int x, int s){
+int somma_rts(int x, int s){
 	return s + x;
 }
 
