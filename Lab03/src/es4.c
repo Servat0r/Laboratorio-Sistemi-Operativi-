@@ -3,8 +3,15 @@
 
 //TODO: Realizzare la versione rientrante semplice (arity == 1), e thread-safe (arity > 1)
 
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
+
+#ifndef INIT_VALUE
+	#error("Compilare con il flag -DINIT_VALUE=<integer>")
+	exit(1);
+#endif
 
 //Non rientrante ma thread-safe
 int somma(int x){
@@ -16,16 +23,9 @@ int somma(int x){
 }
 
 //Versione rientrante
-int somma_r(int x){
-	static int s = INIT_VALUE;
-	int temp = x + s;
-	s = temp;
-	return temp;
-}
-
-//Versione rientrante ma con un argomento in più
-int somma_rts(int x, int s){
-	return s + x;
+int somma_rts(int x, int* s){
+	*s += x;
+	return *s;
 }
 
 int main(int argc, char* argv[]){
