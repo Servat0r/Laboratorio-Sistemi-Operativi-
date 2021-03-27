@@ -15,4 +15,6 @@ int myscandir(const char nomedir[], Queue* dq, Queue* fq);
 
 int printdir(const char pathname[]);
 
+char* getAbsolutePath(const char pathname[]);
+
 #endif

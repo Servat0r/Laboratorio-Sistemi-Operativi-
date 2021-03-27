@@ -5,6 +5,7 @@
 #include <myscandir.h>
 
 #define MAXFILENAME 256
+#define SEPARATOR "--------------------------------\n"
 
 bool myfind(const char dirname[], const char filename[]){
 
@@ -16,7 +17,11 @@ bool myfind(const char dirname[], const char filename[]){
 
 	MyFileInfo* initial = malloc(sizeof(MyFileInfo));
 	if (initial == NULL) return false;
-	initial->pathname = dirname;
+	initial->pathname = getAbsolutePath(dirname);
+	if (initial->pathname == NULL){
+		fprintf(stderr, "Error: could not show absolute paths!\n");
+		initial->pathname = dirname;
+	}
 	initial->filename = dirname;
 	initial->size = 0;
 	enqueue(dq, initial);
@@ -32,7 +37,8 @@ bool myfind(const char dirname[], const char filename[]){
 			currentfile = dequeue(fq);
 			if (strncmp(currentfile->filename, filename, len) == 0){
 				found = true;
-				printf("Path: %s\tLast modified: %s\n",currentfile->pathname, currentfile->date);
+				printf("Path: %s\nLast modified: %s",currentfile->pathname, currentfile->date);
+				printf(SEPARATOR);
 			}
 		}
 	}
@@ -44,14 +50,15 @@ bool myfind(const char dirname[], const char filename[]){
 //Main completo !
 int main(int argc, char* argv[]){
 	if (argc != 3){
-		printf("Usage: myfind <dirname> <filename>");
+		printf("Usage: myfind <dirname> <filename>\n");
 		return -1;
 	}
 	bool b = myfind(argv[1], argv[2]);
 	if (b == true){
 		return 0;
 	} else {
-		fprintf(stderr, "Error: file %s not found in folder %s and all its subfolders!\n", argv[2], argv[1]);
+		char* path = getAbsolutePath(argv[1]);
+		fprintf(stderr, "Error: file %s not found in folder:\n\t%s\nand all its subfolders!\n", argv[2], path);
 		return -1;
 	}
 }

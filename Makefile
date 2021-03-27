@@ -10,6 +10,7 @@ fld1 = ./Lab01
 fld2 = ./Lab02
 fld3 = ./Lab03
 fld4 = ./Lab04
+fld5 = ./Lab05
 
 #Includes delle esercitazioni
 include3 = -I ./includes/
@@ -19,12 +20,13 @@ include3 = -I ./includes/
 .PHONY : clear2
 .PHONY : clear3
 .PHONY : clear4
+.PHONY : clear5
 
 #Tutte le esercitazioni
 
-buildall : build1 build2 build3 build4
+buildall : build1 build2 build3 build4 build5
 
-clearall : clear1 clear2 clear3 clear4
+clearall : clear1 clear2 clear3 clear4 clear5
 
 # Esercitazione 1
 
@@ -64,5 +66,15 @@ build4 : $(fld4)/*
 
 clear4 : 
 	cd $(fld4); \
+	make clear
+
+#Esercitazione 5
+
+build5 : $(fld5)/*
+	cd $(fld5); \
+	make
+
+clear5 :
+	cd $(fld5); \
 	make clear
 

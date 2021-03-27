@@ -8,11 +8,58 @@
 #include <errno.h>
 #include <time.h>
 #include <myscandir.h>
+#define MAX_PATH_SIZE 1024
 
 
 #if !defined(MAXFILENAME)
 #define MAXFILENAME 2048
 #endif
+
+
+char* cwd(void){
+	int i = 1;
+	char* buffer = malloc(MAX_PATH_SIZE);
+	while (1){
+		char* res = getcwd(buffer, i * MAX_PATH_SIZE);
+		if (res == NULL){
+			switch(errno){
+				case ERANGE:
+					buffer = realloc(buffer, (++i) * MAX_PATH_SIZE);
+					break;
+				default:
+					return NULL;
+			}	
+		} else {
+			return buffer;
+		}
+	}
+}
+
+char* getAbsolutePath(const char pathname[]){
+	char* cd = cwd();
+	if (cd == NULL){
+		fprintf(stderr, "Error: cannot get current working directory!\n");
+		return NULL;
+	}
+	int r = chdir(pathname);
+	if (r != 0){
+		perror("When getting absolute path...");
+		return NULL;
+	}
+	char* path = cwd();
+	if (path == NULL){
+		fprintf(stderr, "Error: cannot get current working directory!\n");
+		return NULL;
+	}
+	r = chdir(cd);
+	if (r != 0){
+		perror("When restoring cwd...");
+		return NULL;
+	}
+	free(cd);
+	return path;
+}
+
 
 
 /*
@@ -75,6 +122,7 @@ int myscandir(const char nomedir[], Queue* dq, Queue* fq) {
 
 		//Copiamo le informazioni nel file_info per portarle sopra
 		MyFileInfo* file_info = malloc(sizeof(MyFileInfo));
+
 		if ((file_info->pathname = malloc(len1+len2+2)) == NULL){
 			perror("durante la scansione");
 			return -1; //Facciamo galleggiare l'errore
