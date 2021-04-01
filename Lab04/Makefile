@@ -1,29 +1,61 @@
 CC		=  gcc
 CFLAGS	        += -Wall -g -pedantic
-TARGETS		= bin/* bin/es2/* src/es2/*.o src/es2/lib/*
-INCLUDES	= -I src/es2/
-LIBRARY		= -L src/es2/lib/ -lutils
+SRC		= src
+BIN		= bin
+OBJS		= src/objs
+LIB		= src/libs
+INCLUDES	= src/includes/
+TARGETS		= $(BIN)/* $(LIB)/* $(OBJS)/*
+LIBRARY		= $(LIB)/ -lutils
+
+#Header files
+headers := $(wildcard $(INCLUDES)/*.h)
+#Object files (to be compiled from headers)
+objects := $(headers:$(INCLUDES)/%.h=$(OBJS)/%.o) #This object is updated DYNAMICALLY !
+#Executables that need library
+exelibs := es2
+
 
 .PHONY: clear
 
-.SUFFIXES: .c .h
+.SUFFIXES: .c .h .o
 
 all : es4.1 es4.2 es4.3
 
-es4.1 : src/es1.c
-	-$(CC) $(CFLAGS) $^ -o bin/es1
+#Generals
 
-es4.2 : es4.2.library
-	-$(CC) $(INCLUDES) $(CFLAGS) src/es2/es2.c -o bin/es2/es2 $(LIBRARY)
+$(exelibs) : % : $(SRC)/%.c
+	$(CC) -I $(INCLUDES) $(CFLAGS) $< -o $(BIN)/$@ -L $(LIBRARY)
 
-es4.2.library : es4.2.objects src/es2/numfuncs.o
-	-ar rvs src/es2/lib/libutils.a src/es2/numfuncs.o
+% : $(SRC)/%.c
+	$(CC) $(CFLAGS) $< -o $(BIN)/$@
 
-es4.2.objects : src/es2/numfuncs.c src/es2/numfuncs.h
-	-$(CC) $(INCLUDES) $(CFLAGS) -c src/es2/numfuncs.c -o src/es2/numfuncs.o
+$(objects) : $(OBJS)/%.o : $(SRC)/%.c $(INCLUDES)%.h
+	$(CC) -I $(INCLUDES) $(CFLAGS) -c $< -o $@
 
-es4.3 : src/es3.c
-	-$(CC) $(CFLAGS) $^ -o bin/mywc
+%.a : $(objects)
+	ar rvs $(LIB)/$@ $^
+
+#Exercise 1
+
+es4.1 : es1
+
+es1 : $(SRC)/es1.c
+
+#Exercise 2
+
+es4.2 : es2
+
+es2 : libutils.a $(SRC)/es2.c 
+
+#Exercise 3
+
+es4.3 : es3
+
+es3 : $(SRC)/es3.c
+
+#Clearing
 
 clear : 
 	-rm -f $(TARGETS)
+

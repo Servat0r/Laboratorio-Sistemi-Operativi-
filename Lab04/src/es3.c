@@ -54,7 +54,6 @@ int main(int argc, char** argv){
 	}
 
 	int opt;
-	int returnCode = 0;
 	bool foundL = false;
 	bool foundW = false;
 	optind = 1; 

@@ -7,16 +7,29 @@ TARGETS		= bin/*
 all : es1.1 es1.2 es1.3
 	@echo All Session 1 files compiled!
 
-es1.1 : src/*
-	$(CC) $(CFLAGS) src/strtoupper.c -o bin/strtoupper
+#Generals
+% : src/%.c
+	$(CC) $(CFLAGS) $^ -o bin/$@
 
-es1.2 : src/*
-	$(CC) $(CFLAGS) src/mystrcat.c -o bin/mystrcat
+#Exercise 1
+es1.1 : strtoupper
 
-es1.3 : src/*
-	$(CC) $(CFLAGS) src/cmdlineparsing.c -o bin/cmdlineparsing; \
-	$(CC) $(CFLAGS) src/cmdlineparsing2.c -o bin/cmdlineparsing2; \
-	$(CC) $(CFLAGS) src/cmdlineparsing3.c -o bin/cmdlineparsing3
+strtoupper : src/strtoupper.c
 
+#Exercise 2
+es1.2 : mystrcat
+
+mystrcat : src/mystrcat.c
+
+#Exercise 3
+es1.3 : cmdlineparsing cmdlineparsing2 cmdlineparsing3
+
+cmdlineparsing : src/cmdlineparsing.c
+
+cmdlineparsing2 : src/cmdlineparsing2.c
+
+cmdlineparsing3 : src/cmdlineparsing3.c
+
+#Clearing
 clear : 
 	-rm bin/*

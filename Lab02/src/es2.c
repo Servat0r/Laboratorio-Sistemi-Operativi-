@@ -37,6 +37,9 @@ bool foundN = false;
 bool foundM = false;
 bool foundO = false;
 
+long m = 0;
+long n = 0;
+
 bool validN = false;
 bool validM = false;
 

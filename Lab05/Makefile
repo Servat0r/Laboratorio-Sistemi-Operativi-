@@ -1,39 +1,59 @@
 CC		=  gcc
 CFLAGS	        += -Wall -g -pedantic
-TARGETS		= bin/* src/libs/* src/objs/*
-INCLUDES	= -I ./includes/
-LIBRARY		= libs/ -lutils
+SRC		= src
+BIN		= bin
+OBJS		= src/objs
+LIB		= src/libs
+INCLUDES	= src/includes/
+TARGETS		= $(BIN)/* $(LIB)/* $(OBJS)/*
+LIBRARY		= $(LIB)/ -lutils
+
+#Header files
+headers := $(wildcard $(INCLUDES)/*.h)
+#Object files (to be compiled from headers)
+objects := $(headers:$(INCLUDES)/%.h=$(OBJS)/%.o) #This object is updated DYNAMICALLY !
+#Executables that need library
+exelibs := myfind lsdir
+
 
 .PHONY : clear
+.SUFFIXES : .c .h .o
 
 all : es5.1 es5.2 es5.3 es5.4
 
-es5.1 : src/es1_sc.c src/es1_std.c
-	$(CC) $(CFLAGS) $< -o bin/mycp_sc
-	$(CC) $(CFLAGS) src/es1_std.c -o bin/mycp_std	
 
-es5.2 : src/myfind.c
-	make lib5; \
-	cd src; \
-	$(CC) $(INCLUDES) $(CFLAGS) myfind.c -o ../bin/myfind -L $(LIBRARY) 
+#Generals
 
-lib5 : src/queue.c src/myscandir.c
-	cd src; \
-	$(CC) $(INCLUDES) $(CFLAGS) -c queue.c -o objs/queue.o; \
-	$(CC) $(INCLUDES) $(CFLAGS) -c myscandir.c -o objs/myscandir.o; \
-	ar rvs libs/libutils.a objs/*.o 
+$(exelibs) : % : $(SRC)/%.c
+	$(CC) -I $(INCLUDES) $(CFLAGS) $< -o $(BIN)/$@ -L $(LIBRARY)
 
-printdir : src/printdir.c
-	$(CC) $(CFLAGS) $< -o bin/printdir
+% : $(SRC)/%.c
+	$(CC) -I $(INCLUDES) $(CFLAGS) $< -o $(BIN)/$@ # -L $(LIBRARY)
 
-es5.3 : src/myls.c
-	$(CC) $(CFLAGS) $< -o bin/myls
+$(objects) : $(OBJS)/%.o : $(SRC)/%.c $(INCLUDES)%.h
+	$(CC) -I $(INCLUDES) $(CFLAGS) -c $< -o $@
 
-es5.4 : src/lsdir.c
-	make lib5; \
-	cd src; \
-	$(CC) $(INCLUDES) $(CFLAGS) lsdir.c -o ../bin/lsdir -L $(LIBRARY)
+%.a : $(objects)
+	ar rvs $(LIB)/$@ $^
 	
+#Exercise 1
+
+es5.1 : es1_sc es1_std
+
+#Exercise 2
+
+es5.2 : libutils.a myfind
+
+#Exercise 3
+
+es5.3 : myls
+
+#Exercise 4
+
+es5.4 : libutils.a lsdir
+	
+#Clearing
+
 clear :
 	-rm -f $(TARGETS)
 
