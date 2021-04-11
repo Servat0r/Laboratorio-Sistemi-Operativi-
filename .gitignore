@@ -3,6 +3,7 @@ Lab02/bin/
 Lab03/bin/
 Lab04/bin/
 Lab05/bin/
+Lab06/bin/
 
 Lab01/src/libs
 Lab01/src/objs
@@ -18,3 +19,8 @@ Lab04/src/objs
 
 Lab05/src/libs
 Lab05/src/objs
+
+Lab06/src/libs
+Lab06/src/objs
+
+other/
