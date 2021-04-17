@@ -19,6 +19,9 @@ bool checkExit(char* filename);
 //Controlla se filename == "cd"
 bool checkChdir(char* filename);
 
+//Controlla se il processo corrente deve andare in background
+bool checkBkgr(int argc, char* argv[]);
+
 char* getfilename(char* pathname);
 
 #endif

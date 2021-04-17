@@ -14,6 +14,7 @@
 char* mygetline(char* buffer, char* prompt, size_t n){
 	printf("%s", prompt);
 	size_t j = 0;
+	fflush(stdout);
 	if (fgets(buffer, n, stdin) == NULL){
 		return NULL;
 	} else {
@@ -32,6 +33,11 @@ bool checkExit(char* filename){
 bool checkChdir(char* filename){
 	if (strlen(filename) != 2) return false;
 	return (strncmp(filename, "cd", 2*sizeof(char)) == 0 ? true : false);
+}
+
+bool checkBkgr(int argc, char* argv[]){
+	if (strlen(argv[argc-1]) != 1) return false;
+	return ( strncmp(argv[argc-1],"&",1) == 0 ? true : false );
 }
 
 static size_t getArgc(char* buffer){
