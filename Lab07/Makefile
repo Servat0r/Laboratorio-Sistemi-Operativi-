@@ -14,7 +14,7 @@ headers := $(wildcard $(INCLUDE_DIRS)/*.h)
 #Object files (to be compiled from headers)
 objects := $(headers:$(INCLUDE_DIRS)/%.h=$(OBJS)/%.o) #This object is updated DYNAMICALLY !
 #Executables that need library
-exelibs := pc_arraystack pc_arraystack_for pc_boundedqueue philosophers pipeline3
+exelibs := pc_arraystack pc_arraystack_for pc_boundedqueue philosophers pipeline3 pipeline4
 #All included files
 includes := $(INCLUDE_DIRS:%=-I %)
 
