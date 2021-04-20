@@ -26,6 +26,6 @@ void* dequeue(Queue* q);
 
 void** destroyQueue(Queue* q);
 
-void showQueue(Queue* q);
+//void showQueue(Queue* q);
 
 #endif

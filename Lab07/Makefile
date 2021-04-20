@@ -14,7 +14,7 @@ headers := $(wildcard $(INCLUDE_DIRS)/*.h)
 #Object files (to be compiled from headers)
 objects := $(headers:$(INCLUDE_DIRS)/%.h=$(OBJS)/%.o) #This object is updated DYNAMICALLY !
 #Executables that need library
-exelibs := pc_arraystack pc_arraystack_for pc_boundedqueue philosophers pipeline3 pipeline4
+exelibs := pc_arraystack pc_arraystack_for pc_boundedqueue philosophers philosophers_2 pipeline3 pipeline4
 #All included files
 includes := $(INCLUDE_DIRS:%=-I %)
 
@@ -41,7 +41,7 @@ $(objects) : $(OBJS)/%.o : $(SRC)/%.c $(INCLUDE_DIRS)/%.h
 es7.1 : libutils.a pc_arraystack pc_arraystack_for pc_boundedqueue
 
 #Ex2
-es7.2 : libutils.a philosophers
+es7.2 : libutils.a philosophers philosophers_2
 
 #Ex3
 es7.3 : libutils.a pipeline3

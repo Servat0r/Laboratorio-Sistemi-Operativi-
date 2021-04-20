@@ -97,6 +97,7 @@ i token
 */
 void* threadWrite(void* arg){
 	Queue* tokenstream = ((void**)arg)[0];
+	char* token;
 	icl_hash_t* hashTable = icl_hash_create(NBUCKETS, &hash_pjw, &string_compare);
 	while (!endWrite){
 		PMLock(&mtx_tok);
@@ -106,24 +107,18 @@ void* threadWrite(void* arg){
 			endWrite = true;
 			pthread_cond_signal(&condtok);
 			PMUnlock(&mtx_tok);
-		} else {
-			//TODO Anche in questo caso si possono bufferizzare i token estratti e poi stamparli uno alla volta 
+		} else { 
 			while (size(*tokenstream) > 0){
-				icl_hash_insert(hashTable, (char*)(dequeue(tokenstream)), NULL);
-				/* if (icl_hash_find(hashTable, token) == NULL){
-					//ensures that if an error occurs after, it is not for overwriting an existing element
-					if (icl_hash_insert(hashTable, token, NULL) == NULL){
-						perror("hashInsert");
-						printf("Token not inserted: '%s'\n", token);
-					} 
-				} else free(token); */
+				token = (char*)(dequeue(tokenstream));
+				if (!icl_hash_insert(hashTable, token, NULL)) free(token);
 			}
 			pthread_cond_signal(&condtok);
 			PMUnlock(&mtx_tok);
 		}
 	}
-	int retVal = icl_hash_printKeys(stdout, hashTable) | icl_hash_destroy(hashTable, &free, NULL);
-	printf("threadWrite returned: %d\n", retVal);
+	int retVal1 = icl_hash_printKeys(stdout, hashTable);
+	int retVal2 = icl_hash_destroy(hashTable, &free, NULL);
+	printf("threadWrite returned: %d\n", retVal1 | retVal2);
 	return NULL;
 }
 
@@ -174,9 +169,9 @@ int main(int argc, char* argv[]){
 	if (remtok != NULL){
 		int k = 0;
 		while (remtok[k]) free(remtok[k]);
+		free(remtok);
 	}
 
-	free(remtok);
 	free(argRead);
 	free(argTok);
 	free(argWrite);

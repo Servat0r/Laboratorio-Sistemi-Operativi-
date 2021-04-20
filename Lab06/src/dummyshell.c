@@ -19,8 +19,6 @@
 
 //Options flags
 bool verbose = false;
-bool background = false;
-bool last_in_bg = false;
 
 char buffer[MAXSIZE];
 char prompt[MAXSIZE];
@@ -49,35 +47,18 @@ void handle_sigquit(int sig){
 }
 
 int main(int argc, char** argv){
-
 	signal(SIGINT, handle_sigint);
 	signal(SIGQUIT, handle_sigquit);
-
-	int opt;
-	while ((opt = getopt(argc, argv, ":vb")) != -1){
-		switch(opt){
-			case '?' :
-				fprintf(stderr, "Error: unrecognized option '-%c'\n", optopt);
-				return -1;
-			case 'v':
-				verbose = true; break;
-			case 'b':
-				verbose = false; break;
-			default:
-				printf("Usage: %s [-v] [-b]\n", argv[0]);
-				return -1;
-		}
-
+	if ((argc == 2) && (strncmp(argv[1], "--verbose", 9) == 0)){
+		verbose = true;
+	} else if (argc != 1){
+		printf("Usage: <path>/dummyshell [--verbose]");
+		return -1;
 	}
 
 	while(true){
 		pid = 0;
 		errno = 0;
-		if (background){
-			while ((pid = waitpid(-1, &status, WNOHANG)) > 0){
-				printf("Terminato - %d\n", pid);
-			}
-		}
 		if (getcwd(prompt, MAXSIZE) == NULL){
 			perror("cwd");
 			break;
@@ -106,26 +87,13 @@ int main(int argc, char** argv){
 			chdir(myargv[1]);
 			continue;
 		}
-		if (background && checkBkgr(myargc, myargv)) last_in_bg = true;
 		pid = fork();
-		if (pid == -1){
-			perror("fork");
-			exit(1);
-		} else if (pid == 0){
-			if (last_in_bg){
-				printf("Sono il figlio in background\n");
-				myargv[myargc - 1] = (char*)NULL;
-				execvp(myargv[0], myargv);
-			} else {
-				execvp(myargv[0], myargv);
-			}
+		if (pid == 0){
+			execvp(myargv[0], myargv);
 			master = false;
 			fprintf(stderr, "When executing command '%s': ", myargv[0]);
 			perror("");
 			exit(1);
-		} else if (background && last_in_bg){
-			last_in_bg = false;
-			continue;
 		} else {
 			if (waitpid(pid, &status, 0) == -1){
 				fprintf(stderr,"When waiting process %d: ", pid);

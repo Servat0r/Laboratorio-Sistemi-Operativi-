@@ -2,22 +2,26 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <myqueue.h>
+/* Implementazione della coda */
+#include <myqueue.h> 
 #include <pthread.h>
-#include <PMut.h>
-#include <signal.h>
+/* Implementazione dei wrapper per pthread_mutex_lock e pthread_mutex_unlock
+visti a lezione */
+#include <PMut.h> 
 
-#define MAX_LINE_LENGTH 4096 //4KB
+/* Massima lunghezza di una riga letta */
+#define MAX_LINE_LENGTH 4096
 
-//Mutexes rispettivamente per linestream e tokenstream
+/* Mutexes rispettivamente per linestream e tokenstream */
 pthread_mutex_t mtx_line = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mtx_tok = PTHREAD_MUTEX_INITIALIZER;
 
-//CondVars rispettivamente per linestream e tokenstream
+/* CondVars rispettivamente per linestream e tokenstream */
 pthread_cond_t condline = PTHREAD_COND_INITIALIZER; 
 pthread_cond_t condtok = PTHREAD_COND_INITIALIZER; 
 
-//Guardie per la validità dei token (una sorta di semafori)
+/* Guardie per determinare quando un thread deve terminare. Ognuna di esse è
+vera sse il rispettivo thread deve terminare. */
 bool endRead = false;
 bool endTok = false;
 bool endWrite = false;
@@ -34,7 +38,7 @@ void tokenizer(char* buffer, Queue* q){
 	}
 }
 
-/* Thread che legge ogni riga dal file di input
+/** Thread che legge ogni riga dal file di input
 @param arg : void*[2], dove arg[0] : FILE* è il file in input da tokenizzare e
 	arg[1] : Queue* è la coda in cui inserire le righe lette 
 */
@@ -57,7 +61,7 @@ void* threadRead(void* arg){
 	return NULL;
 }
 
-/* Thread che tokenizza ogni riga che riceve
+/** Thread che tokenizza ogni riga che riceve
 @param arg : void**, dove arg[0], arg[1] : Queue* sono rispettivamente la coda
 in cui threadRead inserisce le righe lette e quella in cui threadTok inserisce
 i token di ogni riga
@@ -75,14 +79,12 @@ void* threadTok(void* arg){
 			PMUnlock(&mtx_line);
 		} else {
 			strncpy(buffer, dequeue(linestream), MAX_LINE_LENGTH);
-			//printf("buffer = %s\n", buffer); fflush(stdout); //showQueue(linestream); showQueue(tokenstream);
 			pthread_cond_signal(&condline);	
 			PMUnlock(&mtx_line);
 
 			PMLock(&mtx_tok);
 			while ((size(*tokenstream) > 0) && !endTok) pthread_cond_wait(&condtok, &mtx_tok); //Serve !endTok ?
 			tokenizer(buffer, tokenstream);
-			//TODO Anche la tokenizzazione si può mettere fuori (si crea un array di tokens che vengono poi caricati su tokenstream in ME)
 			pthread_cond_signal(&condtok);
 			PMUnlock(&mtx_tok);
 		}
@@ -90,7 +92,7 @@ void* threadTok(void* arg){
 	return NULL;
 }
 
-/* Thread che stampa ogni stringa che riceve 
+/** Thread che stampa ogni stringa che riceve 
 @param arg : void**, dove arg[0] : Queue* è la coda da cui threadWrite estrae
 i token
 */
@@ -99,17 +101,15 @@ void* threadWrite(void* arg){
 	while (!endWrite){
 		char* token;
 		PMLock(&mtx_tok);
-		while ((size(*tokenstream) == 0) && !endTok) pthread_cond_wait(&condtok, &mtx_tok);
-		//Viene risvegliato dalla signal		
+		while ((size(*tokenstream) == 0) && !endTok) pthread_cond_wait(&condtok, &mtx_tok);		
 		if (endTok && (size(*tokenstream) == 0)){
 			endWrite = true;
 			pthread_cond_signal(&condtok);
 			PMUnlock(&mtx_tok);
-		} else {
-			//TODO Anche in questo caso si possono bufferizzare i token estratti e poi stamparli uno alla volta 
+		} else { 
 			while (size(*tokenstream) > 0){
 				token = (char*)(dequeue(tokenstream));
-				printf("token: %s\n", token); fflush(stdout);
+				printf("token: %s\n", token);
 				free(token);
 			}
 			pthread_cond_signal(&condtok);
@@ -137,9 +137,9 @@ int main(int argc, char* argv[]){
 	Queue* linestream = initQueue();
 	Queue* tokenstream = initQueue();
 
-	void** argRead = calloc(2, sizeof(void*));
-	void** argTok = calloc(2, sizeof(void*));
-	void** argWrite = calloc(1, sizeof(void*));
+	void* argRead[2];
+	void* argTok[2];
+	void* argWrite[1];
 
 	argRead[0] = inputfile;
 	argRead[1] = linestream;
@@ -159,18 +159,19 @@ int main(int argc, char* argv[]){
 
 	printf("Done\n");
 
-	void** remline = destroyQueue(linestream); //Non contiene strutture heap-allocated
+	/* NON contiene dati heap-allocated */
+	void** remline = destroyQueue(linestream);
 	free(remline);
 	
+	/* Contiene dati heap-allocated */
 	void** remtok = destroyQueue(tokenstream);
 	if (remtok != NULL){
 		int k = 0;
 		while (remtok[k]) free(remtok[k]);
-	}
-
-	free(remtok);
-	free(argRead);
-	free(argTok);
-	free(argWrite);
+		free(remtok);
+	}	
+	//free(argRead);
+	//free(argTok);
+	//free(argWrite);
 	return 0;
 }

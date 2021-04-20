@@ -2,20 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
-//#include <myqueue.h> //Path da specificare come -I <...>
-
-typedef enum {false, true} bool;
-
-typedef struct queue_node {
-	void* elem;
-	struct queue_node* next;
-} QueueNode;
-
-typedef struct queue {
-	QueueNode* head;
-	QueueNode* tail;
-	size_t size;
-} Queue;
+#include <myqueue.h>
 
 Queue* initQueue(void){
 	Queue* q = malloc(sizeof(Queue));
@@ -78,6 +65,7 @@ void* dequeue(Queue* q){
 	}
 }
 
+
 void** destroyQueue(Queue* q){
 	int n = size(*q);
 	void** res = NULL;
@@ -85,20 +73,12 @@ void** destroyQueue(Queue* q){
 		res = calloc(n + 1, sizeof(void*));
 		for (int i = 0; i < n; i++) res[i] = dequeue(q);
 		res[n] = NULL;
-	}
-	free(q);
-	return res;
-}
-
-void showQueue(Queue* q){
-	if (size(*q) > 0){
-		QueueNode* head = q->head;
-		while (head != NULL){
-			printf("%s -> ", head->elem);
-			head = head->next;
-		}
-		printf("\n");
+		if (res) free(q);
 	} else {
-		printf("Empty queue\n");
+		res = calloc(1, sizeof(void*));
+		res[0] = NULL;
+		free(q);
 	}
+	/* Se res == NULL, allora NON si può distruggere la coda in sicurezza */
+	return res;
 }

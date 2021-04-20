@@ -24,7 +24,8 @@ size_t bq_size(BoundedQueue bq){
 }
 
 bool bq_enqueue(BoundedQueue* bq, void* elem){
-	return enqueue(bq->q, elem);
+	if (!bq_isFull(*bq)) return enqueue(bq->q, elem);
+	else return false;
 }
 
 void* bq_dequeue(BoundedQueue* bq){
