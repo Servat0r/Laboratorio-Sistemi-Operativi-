@@ -1,7 +1,7 @@
 #Makefile centralizzato per TUTTI gli eseguibili di laboratorio
 
 #Variabili
-numbers := 01 02 03 04 05 06 07
+numbers := 01 02 03 04 05 06 07 08
 
 folders := $(numbers:%=./Lab%)
 
