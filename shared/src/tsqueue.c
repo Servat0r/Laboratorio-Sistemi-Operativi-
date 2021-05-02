@@ -150,7 +150,6 @@ void** tsqueue_destroy(tsqueue_t* q){
 	res[n] = NULL;
 	pthread_cond_broadcast(&(q->putVar));
 	pthread_cond_broadcast(&(q->getVar));
-	pthread_yield(); /* Allows other put/get requests to terminate */
 
 	pthread_cond_destroy(&(q->putVar));
 	pthread_cond_destroy(&(q->getVar));

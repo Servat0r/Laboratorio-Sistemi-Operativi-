@@ -18,6 +18,8 @@ SHAREINCL		= $(SHAREDIR)/src/includes
 LTHREAD			= -lpthread
 #Files to remove with 'clear'/'clean'
 TARGETS			= $(BIN)/* $(LIB_DIRS)/* $(OBJS)/*
+#Sockets to remove after an uncorrect termination
+SOCKETS			= $(BIN)/socket*
 
 
 #Header files
@@ -28,7 +30,7 @@ defines := $(wildcard $(SHARESRC)/*.h) #Common definitions
 objects := $(headers:$(INCLUDE_DIRS)/%.h=$(OBJS)/%.o)
 commons_o := $(commons_h:$(SHAREINCL)/%.h=$(SHAREOBJS)/%.o)
 #Executables that need static library
-exelibs := myfind lsdir
+exelibs := test_tsqueue multiple_pc
 #All included files
 commons_i := -I $(SHAREINCL) -I $(SHARESRC)
 includes := -I $(INCLUDE_DIRS) $(commons_i)
@@ -37,11 +39,12 @@ dlpath := -Wl,-rpath,$(SHARELIB)
 
 
 .PHONY : clear
+.PHONY : unlink
 .PHONY : debug
 .SUFFIXES : .c .h .o
 
-all : es5.1 es5.2 es5.3 es5.4
 
+all : es9.1 es9.2 es9.3
 
 debug :
 	@echo headers = $(headers)
@@ -73,25 +76,20 @@ $(commons_o) : $(SHAREOBJS)/%.o : $(SHARESRC)/%.c $(SHAREINCL)/%.h $(defines)
 %.so : $(commons_o)
 	$(CC) -shared -o $(SHARELIB)/$@ $^
 
-	
-#Exercise 1
+#Es1
+es9.1 : client client_poll sc_server sc_server_direct
 
-es5.1 : es1_sc es1_std
+#Es2
+es9.2 : client client_poll mt_server
 
-#Exercise 2
+#Es3
+es9.3 : client client_poll mp_server mp_server_term
 
-es5.2 : libutils.a myfind
-
-#Exercise 3
-
-es5.3 : myls
-
-#Exercise 4
-
-es5.4 : libutils.a lsdir
-	
-#Clearing
-
+#Removes bin/objs/libs/sockets
 clear :
-	-rm -f $(TARGETS)
+	-rm $(TARGETS) 
+
+#Removes sockets only
+unlink :
+	-rm $(SOCKETS)
 

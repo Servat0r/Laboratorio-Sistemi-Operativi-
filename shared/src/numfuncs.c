@@ -2,11 +2,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <stdbool.h>
 
-typedef enum {false, true} bool;
-
-//Checks if 'str' contains a "correct" long int
-bool isNumber(char* str, long* val){
+bool isNumber(char* str){
 	if (str == NULL) return false; //MUST check !
 	if (strlen(str) == 0) return false; //MUST check ! ##missing
 	bool result = false;
@@ -23,18 +21,10 @@ bool isNumber(char* str, long* val){
 			break;
 		}
 	}
-	if (result) {
-		char* e = NULL;
-		errno = 0;
-		long v = strtol(str, &e, 10);
-		if (errno == ERANGE){ result = false; } //Overflow
-		if (result) {*val = v;}
-	}
 	return result;
 }
 
-//Checks if 'str' contains a "correct" float number
-bool isFPNumber(char* str, float* val){
+bool isFPNumber(char* str){
 	if (str == NULL) return false; //MUST check !
 	if (strlen(str) == 0) return false; //MUST check ! ##missing
 	bool result = false;
@@ -56,12 +46,38 @@ bool isFPNumber(char* str, float* val){
 			break;
 		}
 	}
-	if (result) {
-		char* e = NULL;
-		errno = 0;
-		float v = (float)strtod(str, &e);
-		if (errno == ERANGE){ result = false; } //Overflow
-		if (result) {*val = v;}
-	}
 	return result;
+}
+
+/** 
+ * @brief Controls if the first argument corresponds to a (long) int and if so,
+ * makes it available in the second argument.
+ * @return  0 -> ok; 1 -> not a number; 2 -> overflow/underflow
+ */
+int getInt(const char* s, long* n) {
+	errno=0;
+	char* e = NULL;
+	if (!isNumber(s)) return 1; /* not a number */
+	long val = strtol(s, &e, 10);
+	if (errno == ERANGE) return 2;    /* overflow/underflow */
+	if (e != NULL && *e == (char)0) {
+		*n = val;
+		return 0;   /* success */
+	}
+	return 1;   /* not a number */
+}
+
+
+
+int getFloat(char* str, float* n){
+	if (!isFPNumber(str)) return 1; /* Not a floating-point number */
+	char* e = NULL;
+	errno = 0;
+	float val = (float)strtod(str, &e);
+	if (errno == ERANGE) return 2; /* overflow/underflow */
+	if (e != NULL && *e == (char)0){
+		*n = val;
+		return 0; /* success */
+	}
+	return 1; /* Not a floating-point number */
 }

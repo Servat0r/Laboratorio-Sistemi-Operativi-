@@ -25,6 +25,9 @@ integers and K is a multiple of M.\nDefault values are: M = 3; N = 4; K = 15. \
 
 #define OPT_STRING ":m:n:k:h"
 
+int optopt;
+char* optarg;
+
 /* Structs for arguments to putThread and getThread */
 typedef struct putArgs_s {
 	int id;

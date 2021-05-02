@@ -1,8 +1,6 @@
 //Esercizio 4
 //Alert: INIT_VALUE is defined when compiling: 'gcc es4.c -DINIT_VALUE=100 -o es4'
 
-//TODO: Realizzare la versione rientrante semplice (arity == 1), e thread-safe (arity > 1)
-
 
 #include <stdio.h>
 #include <stdlib.h>

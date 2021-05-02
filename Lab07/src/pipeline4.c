@@ -10,15 +10,15 @@
 #define MAX_LINE_LENGTH 4096 //4KB
 #define NBUCKETS 10
 
-//Mutexes rispettivamente per linestream e tokenstream
+/* Mutexes rispettivamente per linestream e tokenstream */
 pthread_mutex_t mtx_line = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mtx_tok = PTHREAD_MUTEX_INITIALIZER;
 
-//CondVars rispettivamente per linestream e tokenstream
+/* CondVars rispettivamente per linestream e tokenstream */
 pthread_cond_t condline = PTHREAD_COND_INITIALIZER; 
 pthread_cond_t condtok = PTHREAD_COND_INITIALIZER; 
 
-//Guardie per la validità dei token (una sorta di semafori)
+/* Guardie per la validità dei token (una sorta di semafori) */
 bool endRead = false;
 bool endTok = false;
 bool endWrite = false;
@@ -140,9 +140,9 @@ int main(int argc, char* argv[]){
 	Queue* linestream = initQueue();
 	Queue* tokenstream = initQueue();
 
-	void** argRead = calloc(2, sizeof(void*));
-	void** argTok = calloc(2, sizeof(void*));
-	void** argWrite = calloc(1, sizeof(void*));
+	void* argRead[2];
+	void* argTok[2];
+	void* argWrite[1];
 
 	argRead[0] = inputfile;
 	argRead[1] = linestream;
@@ -171,9 +171,5 @@ int main(int argc, char* argv[]){
 		while (remtok[k]) free(remtok[k]);
 		free(remtok);
 	}
-
-	free(argRead);
-	free(argTok);
-	free(argWrite);
 	return 0;
 }

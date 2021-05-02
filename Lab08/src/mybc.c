@@ -9,9 +9,8 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
-#define PANIC_SYSCALL(expr, res, error) if ((expr) != (res)) { \
-	perror(error); exit(1); \
-}
+#define PANIC_SYSCALL(expr, res, error) if ((expr) != (res)){ \
+perror(#error); exit(EXIT_FAILURE); }
 
 #define MAX_INPUT_SIZE 4096 /* 4K (_PC_PIPE_BUF == 4096 here) */
 

@@ -41,7 +41,7 @@ es3.1 : libtokenizer.a $(SRC)/tokenizer_main.c
 #Exercise 2
 
 es3.2 : libtokenizer.so $(SRC)/tokenizer_main.c 
-	$(CC) $(CFLAGS) -I $(INCLUDES) $(SRC)/tokenizer_main.c  -o $(BIN)/tokenizer_main_shared -L $(LIBRARY)
+	$(CC) $(CFLAGS) -I $(INCLUDES) $(SRC)/tokenizer_main.c  -o $(BIN)/tokenizer_main_shared -Wl,-rpath,$(LIB) -L $(LIBRARY)
 
 #Exercise 3
 
