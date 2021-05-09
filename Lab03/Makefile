@@ -1,5 +1,5 @@
 CC		=  gcc
-CFLAGS	        += -Wall -g -pedantic
+CFLAGS	        += -Wall -g -pedantic -std=c99
 SRC		= src
 BIN		= bin
 OBJS		= src/objs

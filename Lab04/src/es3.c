@@ -14,6 +14,7 @@ mywc -w file1 [file2 ... ] -> gives words count of each file
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <getopt.h>
 
 #define RES0 "For file %s there are: "
 #define RESL "%u lines "

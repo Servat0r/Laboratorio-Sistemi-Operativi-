@@ -1,5 +1,5 @@
 CC				=  gcc
-CFLAGS			+= -Wall -g -pedantic  #-std=c99
+CFLAGS			+= -Wall -g -pedantic  -std=c99
 #Exercise-only dirs
 SRC				= src
 BIN				= bin
@@ -28,7 +28,7 @@ defines := $(wildcard $(SHARESRC)/*.h) #Common definitions
 objects := $(headers:$(INCLUDE_DIRS)/%.h=$(OBJS)/%.o)
 commons_o := $(commons_h:$(SHAREINCL)/%.h=$(SHAREOBJS)/%.o)
 #Executables that need static library
-exelibs := philosophers_2
+#exelibs := philosophers_2
 #All included files
 commons_i := -I $(SHAREINCL) -I $(SHARESRC)
 includes := -I $(INCLUDE_DIRS) $(commons_i)
@@ -78,7 +78,8 @@ $(commons_o) : $(SHAREOBJS)/%.o : $(SHARESRC)/%.c $(SHAREINCL)/%.h $(defines)
 es7.1 : libutils.a pc_arraystack pc_arraystack_for pc_boundedqueue
 
 #Ex2
-es7.2 : libutils.a philosophers philosophers_2
+es7.2 : libutils.a philosophers 
+#philosophers_2
 
 #Ex3
 es7.3 : libutils.a pipeline3

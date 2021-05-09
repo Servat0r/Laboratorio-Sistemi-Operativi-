@@ -7,12 +7,14 @@
 
 #define _DEFINES_H
 #include <stdio.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <errno.h>
 #include <unistd.h>
 #include <pthread.h>
+#include <ctype.h>
 
 /** @brief Checks whether a system call fails and if yes, prints the
  * corresponding error and exits.

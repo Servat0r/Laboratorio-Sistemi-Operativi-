@@ -8,7 +8,6 @@
 #include <ctype.h>
 #include <myutils.h>
 #include <limits.h>
-#include <signal.h>
 #define MAXSIZE 4096
 
 /*
@@ -29,26 +28,7 @@ pid_t pid;
 
 bool master = true;
 
-void handle_sigint(int sig){
-	if (pid > 0) {
-		printf("\n");
-		fflush(stdout);
-		kill(pid, SIGQUIT);
-	}
-}
-
-void handle_sigquit(int sig){
-	if (pid > 0){
-		kill(pid, SIGQUIT);
-	}
-	printf("Terminated\n");
-	fflush(stdout);
-	exit(0);
-}
-
 int main(int argc, char** argv){
-	signal(SIGINT, handle_sigint);
-	signal(SIGQUIT, handle_sigquit);
 	if ((argc == 2) && (strncmp(argv[1], "--verbose", 9) == 0)){
 		verbose = true;
 	} else if (argc != 1){

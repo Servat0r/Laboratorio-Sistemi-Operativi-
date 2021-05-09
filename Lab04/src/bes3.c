@@ -16,6 +16,7 @@ mywc -c file1 [file2 ... ] -> gives chars count of each file
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include <getopt.h>
 
 #define RES0 "For file %s there are: "
 #define RESL "%u lines "

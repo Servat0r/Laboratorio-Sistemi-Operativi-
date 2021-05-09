@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <time.h>
+#include <getopt.h>
 
 #define N 1000
 #define K1 100

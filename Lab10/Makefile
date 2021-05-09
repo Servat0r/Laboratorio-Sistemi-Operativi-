@@ -17,9 +17,9 @@ SHAREINCL		= $(SHAREDIR)/src/includes
 #Threads library (POSIX threads)
 LTHREAD			= -lpthread
 #Files to remove with 'clear'/'clean'
-TARGETS			= $(BIN)/* $(LIB_DIRS)/* $(OBJS)/*
+TARGETS			= $(wildcard $(BIN)/*) $(wildcard $(LIB_DIRS)/*) $(wildcard $(OBJS)/*)
 #Sockets to remove after an uncorrect termination
-SOCKETS			= $(BIN)/socket*
+SOCKETS			= $(wildcard $(BIN)/socket*)
 
 
 #Header files
@@ -30,7 +30,7 @@ defines := $(wildcard $(SHARESRC)/*.h) #Common definitions
 objects := $(headers:$(INCLUDE_DIRS)/%.h=$(OBJS)/%.o)
 commons_o := $(commons_h:$(SHAREINCL)/%.h=$(SHAREOBJS)/%.o)
 #Executables that need static library
-exelibs := test_tsqueue multiple_pc
+#exelibs := mt_server_inia
 #All included files
 commons_i := -I $(SHAREINCL) -I $(SHARESRC)
 includes := -I $(INCLUDE_DIRS) $(commons_i)
@@ -44,7 +44,7 @@ dlpath := -Wl,-rpath,$(SHARELIB)
 .SUFFIXES : .c .h .o
 
 
-all : es9.1 es9.2 es9.3
+all : client_poll es10.1 es10.2 es10.3
 
 debug :
 	@echo headers = $(headers)
@@ -58,7 +58,7 @@ debug :
 
 #Generals
 
-$(exelibs) : % : $(SRC)/%.c libutils.a libshared.so
+$(exelibs) : % : $(SRC)/%.c libshared.so libutils.a 
 	$(CC) $(includes) $(CFLAGS) $< -o $(BIN)/$@ $(LTHREAD) $(dlpath) -L $(LIBRARY) -L $(SHARELIB)/ -lshared
 
 % : $(SRC)/%.c libshared.so
@@ -77,13 +77,13 @@ $(commons_o) : $(SHAREOBJS)/%.o : $(SHARESRC)/%.c $(SHAREINCL)/%.h $(defines)
 	$(CC) -shared -o $(SHARELIB)/$@ $^
 
 #Es1
-es9.1 : client client_poll sc_server sc_server_direct
+es10.1 : sigint_count
 
 #Es2
-es9.2 : client client_poll mt_server
+es10.2 : mp_server_sigs
 
 #Es3
-es9.3 : client client_poll mp_server mp_server_term
+es10.3 : mt_server_sigs
 
 #Removes bin/objs/libs/sockets
 clear :

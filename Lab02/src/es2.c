@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <getopt.h>
 
 typedef enum {false, true} bool;
 typedef int opt_t(const char*);

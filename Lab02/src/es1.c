@@ -1,16 +1,11 @@
-/*
-Esempio di uso di getopt
-
-
-
-
-*/
+/* Esempio di uso di getopt */
 
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include <stdlib.h>
-#include <errno.h> // ##missing
+#include <errno.h>
+#include <getopt.h>
 
 typedef enum {false, true} bool;
 

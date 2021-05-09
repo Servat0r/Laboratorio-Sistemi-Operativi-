@@ -45,7 +45,7 @@ int main(int argc, char* argv[]){
 		return -1;
 	}
 	long N;
-	if (!isNumber(argv[1], &N) || (N <= 0)){ //Here we use lazy evaluation
+	if (!getInt(argv[1], &N) || (N <= 0)){ //Here we use lazy evaluation
 		fprintf(stderr, "Error: matrix size must be a positive integer!\n");
 		return -1;
 	}
@@ -127,7 +127,7 @@ int main(int argc, char* argv[]){
 					break;
 				}
 				end[0] = '\0';
-				if (!isFPNumber(begin, M1 + i*N + j)){
+				if (!getFloat(begin, M1 + i*N + j)){
 					fprintf(stderr, "Error: uncorrect argument passed as matrix dimension or corrupted data in './mat_dump.txt'\n");
 					errno = 2;
 					break;				

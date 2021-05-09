@@ -1,5 +1,5 @@
 CC 		= gcc
-CFLAGS 		= -Wall -pedantic -g
+CFLAGS 		= -Wall -pedantic -g -std=c99
 TARGETS		= bin/*
 
 .PHONY : clear
